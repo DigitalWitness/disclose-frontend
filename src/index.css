@@ -1,0 +1,17 @@
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+
+#content {
+  padding-top: 70px;
+  min-height: ~"calc(100vh - 92px)";
+}
