@@ -42,7 +42,8 @@ class SubmissionFeed extends Component {
     render() {
         return (
 	        <div className="Submission">
-	            <PageHeader>Latest Submissions</PageHeader>
+	            <PageHeader>Latest Submissions
+				</PageHeader>
 	            {SubmissionList(this.state.submissions)}
 	      	</div>        
         );
