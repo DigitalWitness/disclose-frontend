@@ -8,7 +8,8 @@
     "react-dom": "^16.0.0",
     "react-json-pretty": "^1.7.4",
     "react-nav-bar": "^0.6.5",
-    "react-router": "^4.2.0"
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
     "react-scripts": "1.0.16"
