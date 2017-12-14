@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {PageHeader} from 'react-bootstrap'
 import Submission from './Submission'
 
-const url = 'http://localhost:3000/api/submission';
+const url = 'http://localhost:4000/api/submission';
 
 function SubmissionList(submissions) {
 	const submissionItems = submissions.map((submission) =>

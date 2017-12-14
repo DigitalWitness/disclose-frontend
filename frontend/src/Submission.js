@@ -51,7 +51,7 @@ class Submission extends Component {
 		           		<Button bsStyle="primary" onClick={this.open}>View Additional Content</Button>
 		           	</p>
 	            </Well>
-	        </div>        
+	        </div>
         );
     }
 }

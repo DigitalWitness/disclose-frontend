@@ -7,9 +7,9 @@ class Submitters extends Component {
 	        <div className='Submitters'>
 	       		<PageHeader><small>Submitters</small></PageHeader>
 	       		<div>
-	       			
+
 	       		</div>
-	        </div>        
+	        </div>
         );
     }
 }

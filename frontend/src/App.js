@@ -1,39 +1,31 @@
-import React, { Component } from 'react';
-import { Grid, Col, Row} from 'react-bootstrap';
-import SubmissionFeed from './SubmissionFeed'
-import CaseFeed from './CaseFeed'
-import Submitters from './Submitters'
-import Officers from './Officers'
+import React, { Component } from 'react'
+import { withRouter } from "react-router-dom";
 import Header from './Header'
-import './App.css';
+import Routes from './Routes'
+import './App.css'
 
 class App extends Component {
-  render() {
-    return (
-      <div>
-        <Header/>
-        <div id="content">
-          <Grid>
-            <Row className="show-grid">
-             <Col xs={6} md={2}>
-                <CaseFeed/>
-                <Submitters/>
-                <Officers/>
-             </Col>
 
-             <Col xs={6} md={8}>
-              <SubmissionFeed/>
-             </Col>
+    constructor(props) {
+        super(props);
+        this.state = {
+            isAuthenticated: false,
+            isAuthenticating: true
+        };
+    }
 
-             <Col xs={6} md={2}>
-             </Col>
-             
-             </Row>
-          </Grid>
-        </div>
-      </div>
-    );
-  }
+    render() {
+        const childProps = {
+            isAuthenticated: this.state.isAuthenticated,
+            userHasAuthenticated: this.userHasAuthenticated
+        };
+        return (
+            <div>
+              <Header/>
+              <Routes childProps={childProps}/>
+            </div>
+        );
+    }
 }
 
-export default App;
+export default withRouter(App);
