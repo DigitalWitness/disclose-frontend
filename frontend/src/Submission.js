@@ -22,7 +22,6 @@ class Submission extends Component {
     	this.setState({ showModal: true });
   	}
 
-
     render() {
         return (
 	        <div className="Submission">

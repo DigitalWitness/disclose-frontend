@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import './Login.css'
-
+import Auth from './Auth'
 
 export default class Login extends Component {
 
@@ -25,10 +25,30 @@ export default class Login extends Component {
         });
     }
 
+    login() {
+        console.log("Logging in")
+        const email = encodeURIComponent(this.state.email);
+        const password = encodeURIComponent(this.state.password);
+        const formData = "email="+email+"&password="+password;
+        fetch('http://localhost:4000/login', {
+            method : 'POST',
+            headers : {'Content-Type':'application/x-www-form-urlencoded'},
+            body : formData
+        }).then(response => {
+            if (response.status !== 200) {
+                console.error('Error | Status Code: ' + response.status);
+                alert("Username not found or password incorrect.")
+                return;
+            }
+            this.props.history.push('/profile');
+        }).catch(error => {
+            console.log(error)
+        });
+    }
+
     handleSubmit = event => {
         event.preventDefault();
-        // TODO Add formal authentication logic
-        this.props.history.push("/");
+        this.login()
     }
 
     render() {
@@ -38,7 +58,7 @@ export default class Login extends Component {
                     <FormGroup controlId="email" bsSize="large">
                         <ControlLabel>Email</ControlLabel>
                         <FormControl
-                            autofocus
+                            autoFocus
                             type="email"
                             value={this.state.email}
                             onChange={this.handleChange}
