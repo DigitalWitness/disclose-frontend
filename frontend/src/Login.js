@@ -40,6 +40,7 @@ export default class Login extends Component {
                 alert("Username not found or password incorrect.")
                 return;
             }
+            localStorage.setItem("email", this.state.email);
             this.props.history.push('/profile');
         }).catch(error => {
             console.log(error)
@@ -55,6 +56,8 @@ export default class Login extends Component {
         return(
             <div className="Login">
                 <form onSubmit={this.handleSubmit}>
+                <h1><span className="fa fa-sign-in"></span> Login</h1>
+
                     <FormGroup controlId="email" bsSize="large">
                         <ControlLabel>Email</ControlLabel>
                         <FormControl

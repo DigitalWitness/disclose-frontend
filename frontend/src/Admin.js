@@ -84,7 +84,7 @@ export default class Admin extends Component {
                 </Table>
                 <div className="text-center">
                     <Button onClick={this.open}>Create New User</Button>
-                    <Button>Back to Profile</Button>
+                    <Button onClick={()=>this.props.history.goBack()}>Back to Profile</Button>
                 </div>
             </div>
         );

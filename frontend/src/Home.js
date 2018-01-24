@@ -11,20 +11,16 @@ export default class Home extends Component {
     render() {
         return (
              <div id="content">
-             <Grid>
-                <Row className="show-grid">
-                <Col xs={6} md={2}>
+                 <Grid>
+                    <Row className="show-grid">
+                        <Col xs={6} md={2}>
 
-                </Col>
-
-                <Col xs={6} md={8}>
-                     <SubmissionFeed/>
-                </Col>
-
-
-
-                </Row>
-            </Grid>
+                        </Col>
+                        <Col xs={6} md={8}>
+                             <SubmissionFeed/>
+                        </Col>
+                    </Row>
+                </Grid>
             </div>
         );
     }

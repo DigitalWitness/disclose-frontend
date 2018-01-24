@@ -4,19 +4,26 @@ import './UserProfile.css'
 
 export default class UserProfile extends Component {
 
+    constructor(props) {
+        super(props);
+        this.email = localStorage.getItem("email");
+    }
+
     render() {
         return (
-            <div className="UserProfile">
+            <div className="UserProfile container row">
                 <PageHeader className="text-center">
                     <h1>Welcome</h1>
-                    <Button>Logout</Button>
+                    <Button href='/login'>Logout</Button>
                 </PageHeader>
-
-                <Well bsSize="lg">
-                    <strong>Email:</strong><br/>
-                    <strong>ID:</strong><br/>
+                <Well>
+                <h3><span className="fa fa-user"></span> Local</h3>
+                    <p>
+                        <strong>Email: </strong>{this.email}<br/>
+                        <strong>ID:</strong><br/>
+                    </p>
                 </Well>
-                <Button href="home">Submissions</Button>
+                <Button href="feed">Submissions</Button>
                 <Button href="admin">Admin</Button>
             </div>
         )
