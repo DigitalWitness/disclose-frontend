@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button} from 'react-bootstrap'
+import {Button, Tabs, Tab} from 'react-bootstrap'
 import './ChatLogView.css'
 
 export default class SubmissionDetail extends Component {
@@ -8,10 +8,11 @@ export default class SubmissionDetail extends Component {
         super(props);
         this.submission = JSON.parse(localStorage.getItem("submission"));
         this.image_src = "";
+        this.raw_system_logs = "";
         console.log(this.submission);
     }
 
-    componentDidMount = () => {
+    fetchPhotos = () => {
         const url = 'http://localhost:4000/api/submission/photo/';
         fetch(url + this.submission.submission_id).then(response => {
             return response.blob();
@@ -19,13 +20,36 @@ export default class SubmissionDetail extends Component {
         .then(image => {
             var myImage = document.querySelector('img');
             var objectURL = URL.createObjectURL(image);
-            console.log(objectURL);
             myImage.src = objectURL;
         })
         .catch(error => {
             var message = "Image with GUID " + this.submission.submission_id + " not found.";
             console.log({error: error, message : message});
         })
+    }
+
+    fetchSystemLogs = () => {
+        const url = 'http://localhost:4000/api/submission/log/';
+        fetch(url + this.submission.submission_id).then(response => {
+            return response.blob();
+        })
+        .then(log_blob => {
+            var reader = new FileReader();
+            reader.addEventListener('loadend', (e) => {
+                this.raw_system_logs = e.srcElement.result;
+                console.log(this.raw_system_logs);
+            });
+            reader.readAsText(log_blob);
+        })
+        .catch(error => {
+            var message = "Image with GUID " + this.submission.submission_id + " not found.";
+            console.log({error: error, message : message});
+        })
+    }
+
+    componentDidMount = () => {
+        this.fetchPhotos();
+        this.fetchSystemLogs();
     }
 
     getChatLogViews = () => {
@@ -57,15 +81,32 @@ export default class SubmissionDetail extends Component {
                             <strong>Submission GUID: </strong>{this.submission.submission_id}<br/>
                         </p>
                     </div>
-                    <div className="well">
-                        <h3><span className="fa fa-envelope"></span> Messages </h3>
-                        <hr/>
-                        {this.getChatLogViews()}
-                    </div>
-                    <div className="well">
-                        <h3><span className="fa fa-picture-o"></span> Photos/Videos </h3>
-                        <img id='img' className="img-thumbnail"/>
-                    </div>
+                    <Tabs defaultActiveKet={1} id="uncontrolled-tab-example">
+                        <Tab eventKey={1} title="Messeges">
+                            <div>
+                            <h3><span className="fa fa-envelope"></span> Messages </h3>
+                            <hr/>
+                            {this.getChatLogViews()}
+                        </div>
+                        </Tab>
+                        <Tab eventKey={2} title="Pictures/Videos">
+                            <div>
+                                <h3><span className="fa fa-picture-o"></span> Photos/Videos </h3>
+                                <img id='img' className="img-thumbnail"/>
+                            </div>
+                        </Tab>
+                        <Tab eventKey={3} title="Logs">
+                            <div>
+                                <h3><span className="fa fa-file-text"></span> System Logs</h3>
+                                <div>
+                                    {this.raw_system_logs}
+                                </div>
+                            </div>
+                        </Tab>
+                    </Tabs>
+
+
+
                 </div>
             </div>
         )
