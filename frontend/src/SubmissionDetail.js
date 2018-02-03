@@ -12,22 +12,6 @@ export default class SubmissionDetail extends Component {
         this.photo_containers = [];
     }
 
-    fetchPhotos = () => {
-        const url = 'http://localhost:4000/api/submission/photo/';
-        fetch(url + this.submission.submission_id).then(response => {
-            return response.blob();
-        })
-        .then(image => {
-            var myImage = document.querySelector('img');
-            var objectURL = URL.createObjectURL(image);
-            myImage.src = objectURL;
-        })
-        .catch(error => {
-            var message = "Image with GUID " + this.submission.submission_id + " not found.";
-            console.log({error: error, message : message});
-        })
-    }
-
     fetchSystemLogs = () => {
         const url = 'http://localhost:4000/api/submission/log/';
         fetch(url + this.submission.submission_id).then(response => {
@@ -61,8 +45,8 @@ export default class SubmissionDetail extends Component {
                 .then(photo_blob => {
                     var objectURL = URL.createObjectURL(photo_blob);
                     this.photo_containers.push(
-                        <div key={filename}>
-                            <img src={objectURL} className="img-thumbnail"/>
+                        <div key={filename} className="col-lg-3 col-md-4 col-xs-6">
+                            <img src={objectURL} className="img-fluid img-thumbnail"/>
                         </div>
                     );
                 })
@@ -71,7 +55,6 @@ export default class SubmissionDetail extends Component {
     }
 
     componentDidMount = () => {
-        this.fetchPhotos();
         this.fetchSystemLogs();
         this.fetchAllPhotos();
 
@@ -117,7 +100,11 @@ export default class SubmissionDetail extends Component {
                         <Tab eventKey={2} title="Pictures/Videos">
                             <div>
                                 <h3><span className="fa fa-picture-o"></span> Photos/Videos </h3>
-                                {this.photo_containers}
+                                <div className="container">
+                                    <div className="row text-center text-lg-left">
+                                        {this.photo_containers}
+                                    </div>
+                                </div>
                             </div>
                         </Tab>
                         <Tab eventKey={3} title="Logs">
