@@ -9,23 +9,7 @@ export default class SubmissionDetail extends Component {
         this.submission = JSON.parse(localStorage.getItem("submission"));
         this.image_src = "";
         this.raw_system_logs = "";
-        console.log(this.submission);
-    }
-
-    fetchPhotos = () => {
-        const url = 'http://localhost:4000/api/submission/photo/';
-        fetch(url + this.submission.submission_id).then(response => {
-            return response.blob();
-        })
-        .then(image => {
-            var myImage = document.querySelector('img');
-            var objectURL = URL.createObjectURL(image);
-            myImage.src = objectURL;
-        })
-        .catch(error => {
-            var message = "Image with GUID " + this.submission.submission_id + " not found.";
-            console.log({error: error, message : message});
-        })
+        this.photo_containers = [];
     }
 
     fetchSystemLogs = () => {
@@ -37,7 +21,6 @@ export default class SubmissionDetail extends Component {
             var reader = new FileReader();
             reader.addEventListener('loadend', (e) => {
                 this.raw_system_logs = e.srcElement.result;
-                console.log(this.raw_system_logs);
             });
             reader.readAsText(log_blob);
         })
@@ -47,9 +30,34 @@ export default class SubmissionDetail extends Component {
         })
     }
 
+    fetchAllPhotos = () => {
+        const meta_data_url = 'http://localhost:4000/api/file/';
+        fetch(meta_data_url + this.submission.submission_id).then(response => {
+            return response.json()
+        }).then(submission_files => {
+            const photo_url = 'http://localhost:4000/api/file/photo/'
+            submission_files.forEach(submission_file => {
+                const submission_id = this.submission.submission_id;
+                const filename = submission_file.file.filename;
+                fetch(photo_url + submission_id + '/' + filename).then(response => {
+                    return response.blob();
+                })
+                .then(photo_blob => {
+                    var objectURL = URL.createObjectURL(photo_blob);
+                    this.photo_containers.push(
+                        <div key={filename} className="col-lg-3 col-md-4 col-xs-6">
+                            <img src={objectURL} className="img-fluid img-thumbnail"/>
+                        </div>
+                    );
+                })
+            });
+        });
+    }
+
     componentDidMount = () => {
-        this.fetchPhotos();
         this.fetchSystemLogs();
+        this.fetchAllPhotos();
+
     }
 
     getChatLogViews = () => {
@@ -92,7 +100,11 @@ export default class SubmissionDetail extends Component {
                         <Tab eventKey={2} title="Pictures/Videos">
                             <div>
                                 <h3><span className="fa fa-picture-o"></span> Photos/Videos </h3>
-                                <img id='img' className="img-thumbnail"/>
+                                <div className="container">
+                                    <div className="row text-center text-lg-left">
+                                        {this.photo_containers}
+                                    </div>
+                                </div>
                             </div>
                         </Tab>
                         <Tab eventKey={3} title="Logs">
@@ -123,7 +135,6 @@ class ChatLogView extends Component {
 
     getMessageContainers = () => {
         const messageContainers = [];
-        console.log(this.props.messages);
         this.props.messages.message.forEach((message) => {
             messageContainers.push(
                 <div className="message-container">
