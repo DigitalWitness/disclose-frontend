@@ -3,7 +3,7 @@ import { Table, Button } from 'react-bootstrap'
 import AccountCreationForm from './AccountCreation'
 import './Admin.css'
 
-const url = 'http://localhost:4000/api/user';
+const url = 'http://violetcement01.icl.gtri.org/api/user';
 
 export default class Admin extends Component {
 

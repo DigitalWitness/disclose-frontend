@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import {Button, Tabs, Tab} from 'react-bootstrap'
 import './ChatLogView.css'
 
-export default class SubmissionDetail extends Component {
+const base_url = "http://nij-disclose-stsd.gtri.gatech.edu";
 
+export default class SubmissionDetail extends Component {
+ 
     constructor(props) {
         super(props);
         this.submission = JSON.parse(localStorage.getItem("submission"));
@@ -13,7 +15,7 @@ export default class SubmissionDetail extends Component {
     }
 
     fetchSystemLogs = () => {
-        const url = 'http://localhost:4000/api/submission/log/';
+        const url = base_url + '/api/submission/log/';
         fetch(url + this.submission.submission_id).then(response => {
             return response.blob();
         })
@@ -31,11 +33,11 @@ export default class SubmissionDetail extends Component {
     }
 
     fetchAllPhotos = () => {
-        const meta_data_url = 'http://localhost:4000/api/file/';
+        const meta_data_url = base_url + '/api/file/';
         fetch(meta_data_url + this.submission.submission_id).then(response => {
             return response.json()
         }).then(submission_files => {
-            const photo_url = 'http://localhost:4000/api/file/photo/'
+            const photo_url = base_url + '/api/file/photo/';
             submission_files.forEach(submission_file => {
                 const submission_id = this.submission.submission_id;
                 const filename = submission_file.file.filename;

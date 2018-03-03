@@ -30,7 +30,8 @@ export default class Login extends Component {
         const email = encodeURIComponent(this.state.email);
         const password = encodeURIComponent(this.state.password);
         const formData = "email="+email+"&password="+password;
-        fetch('http://localhost:4000/login', {
+        const login_url = "http://nij-disclose-stsd.gtri.gatech.edu/api/login";
+        fetch(login_url, {
             method : 'POST',
             headers : {'Content-Type':'application/x-www-form-urlencoded'},
             body : formData

@@ -25,8 +25,8 @@ export default class AccountCreationForm extends Component {
                         +"&password="+this.state.password
                         +"&fname="+this.state.firstName
                         +"&lname="+this.state.lastName;
-
-        fetch('http://localhost:4000/signup', {
+        const signup_url = 'http://violetcement01.icl.gtri.org/api/signup'
+        fetch(signup_url, {
             method : 'POST',
             headers: {'Content-Type':'application/x-www-form-urlencoded'},
             body : formData
