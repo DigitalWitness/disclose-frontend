@@ -26,7 +26,9 @@ export default class SubmissionFeed extends Component {
 	}
 
 	componentDidMount = () => {
-		const url = 'http://localhost:4000/api/submission';
+		
+		const url = 'http://nij-disclose-stsd.gtri.gatech.edu/api/submission';
+		// const url = 'http://localhost:4000/api/submission';
 		fetch(url)
 		.then(results => {
 			return results.json();
