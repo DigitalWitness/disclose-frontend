@@ -5,7 +5,7 @@ import './ChatLogView.css'
 const base_url = "http://nij-disclose-stsd.gtri.gatech.edu";
 
 export default class SubmissionDetail extends Component {
- 
+
     constructor(props) {
         super(props);
         this.submission = JSON.parse(localStorage.getItem("submission"));
@@ -81,7 +81,7 @@ export default class SubmissionDetail extends Component {
                 <div className="container">
                     <div className="page-header text-center">
                         <h1>Submission Detail</h1>
-                        <Button>Back to Latest Submissions</Button>
+                        <Button href='/feed'>Back to Latest Submissions</Button>
                     </div>
                     <div className="well">
                         <h3><span className="fa fa-user"></span> Submitter </h3>
