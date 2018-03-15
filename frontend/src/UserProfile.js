@@ -13,7 +13,7 @@ export default class UserProfile extends Component {
         return (
             <div className="UserProfile container row">
                 <PageHeader className="text-center">
-                    <h1>Welcome</h1>
+                    <p>Welcome</p>
                     <Button href='/login'>Logout</Button>
                 </PageHeader>
                 <Well>

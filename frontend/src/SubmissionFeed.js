@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {PageHeader, Button} from 'react-bootstrap'
 import SubmissionDetailModal from './SubmissionDetailModal'
 
+import config from './config.js';
+
 export default class SubmissionFeed extends Component {
 
 	constructor(props) {
@@ -26,9 +28,11 @@ export default class SubmissionFeed extends Component {
 	}
 
 	componentDidMount = () => {
-		
-		const url = 'http://nij-disclose-stsd.gtri.gatech.edu/api/submission';
-		// const url = 'http://localhost:4000/api/submission';
+		this.fetchSubmissions();
+	}
+
+	fetchSubmissions = () => {
+		const url = config.base_url + '/api/submission'
 		fetch(url)
 		.then(results => {
 			return results.json();
@@ -40,6 +44,16 @@ export default class SubmissionFeed extends Component {
 		})
 		.catch((error) => {
 			console.error(error);
+		});
+	}
+
+	removeId = (submission) => {
+		var id = submission.submission_id;
+		const url = config.base_url + '/api/submission/' + id;
+		fetch(url, {method: 'DELETE'}).then(results => {
+			this.fetchSubmissions()
+		}).catch(error => {
+			console.log(error)
 		});
 	}
 
@@ -60,6 +74,11 @@ export default class SubmissionFeed extends Component {
 							bsStyle="primary"
 							onClick={() => {this.openSubmissionDetail(submission)}}>
 							View Detail
+						</Button>{' '}
+						<Button
+							bsStyle="warning"
+							onClick={() => {this.removeId(submission)}}>
+							Remove
 						</Button>
 					</td>
 				</tr>
