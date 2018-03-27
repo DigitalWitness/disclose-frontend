@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { Table, Button } from 'react-bootstrap'
 import AccountCreationForm from './AccountCreation'
 import './Admin.css'
-
-const url = 'http://violetcement01.icl.gtri.org/api/user';
+import config from './config.js'
 
 export default class Admin extends Component {
 
@@ -38,6 +37,7 @@ export default class Admin extends Component {
     );
 
     getUsers = () => {
+        const url = config.base_url + '/api/user';
         fetch(url).then(results => {
             return results.json()
         }).then((users) => {
@@ -50,6 +50,7 @@ export default class Admin extends Component {
     }
 
     deleteUser = (email) =>  {
+        const url = config.base_url + '/api/user';
         fetch(url + '/' + email, {
             method: 'delete',
             body : {}
