@@ -23,7 +23,7 @@ export default class UserProfile extends Component {
                         <strong>ID:</strong><br/>
                     </p>
                 </Well>
-                <Button href="feed">Submissions</Button>
+                <Button href="feed">Submissions</Button>{' '}
                 <Button href="admin">Admin</Button>
             </div>
         )

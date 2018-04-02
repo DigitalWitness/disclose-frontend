@@ -86,7 +86,7 @@ export default class SubmissionDetail extends Component {
                     <div className="well">
                         <h3><span className="fa fa-user"></span> Submitter </h3>
                         <p>
-                            <strong>User: </strong>{this.submission.user}<br/>
+                            <strong>User: </strong>{(this.submission.user === 'null') ? "George P. Burdell" : this.submission.user}<br/>
                             <strong>MongoID: </strong>{this.submission._id}<br/>
                             <strong>Submission GUID: </strong>{this.submission.submission_id}<br/>
                         </p>

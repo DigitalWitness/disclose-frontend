@@ -62,9 +62,9 @@ export default class SubmissionFeed extends Component {
 		this.state.submissions.forEach((submission) => {
 			rows.push(
 				<tr key={submission._id}>
-					<td>{submission.user}</td>
-					<td>Placeholder</td>
-					<td>Placeholder</td>
+					<td>{submission.user === 'null' ? "George P. Burdell" : submission.user}</td>
+					<td>{submission.user === 'null' ? "gpburdell@gatech.edu" : submission.user}</td>
+					<td>{submission.user === 'null' ? "Atlanta, GA" : submission.user}</td>
 					<td>
 					<SubmissionDetailModal
 						showModal={this.state.showModal}
