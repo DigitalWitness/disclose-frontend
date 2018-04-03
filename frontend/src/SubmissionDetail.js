@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import {Button, Tabs, Tab} from 'react-bootstrap'
+import JSONPretty from 'react-json-pretty';
+import ReactPlayer from 'react-player'
 import './ChatLogView.css'
 
-const base_url = "http://nij-disclose-stsd.gtri.gatech.edu";
+import config from './config.js'
+
+const base_url = config.base_url;
 
 export default class SubmissionDetail extends Component {
 
@@ -10,56 +14,97 @@ export default class SubmissionDetail extends Component {
         super(props);
         this.submission = JSON.parse(localStorage.getItem("submission"));
         this.image_src = "";
-        this.raw_system_logs = "";
+        this.state = {
+          system_logs : "Not Submitted"
+        }
         this.photo_containers = [];
+        this.video_containers = [];
     }
 
-    fetchSystemLogs = () => {
-        const url = base_url + '/api/submission/log/';
-        fetch(url + this.submission.submission_id).then(response => {
-            return response.blob();
-        })
-        .then(log_blob => {
-            var reader = new FileReader();
-            reader.addEventListener('loadend', (e) => {
-                this.raw_system_logs = e.srcElement.result;
-            });
-            reader.readAsText(log_blob);
-        })
-        .catch(error => {
-            var message = "Image with GUID " + this.submission.submission_id + " not found.";
-            console.log({error: error, message : message});
-        })
+    playVideo() {
+      this.refs.vidRef.play();
     }
 
-    fetchAllPhotos = () => {
-        const meta_data_url = base_url + '/api/file/';
+    fetchPhoto = (photo_url, submission_id, filename) => {
+      fetch(photo_url + submission_id + '/' + filename).then(response => {
+          return response.blob();
+      })
+      .then(photo_blob => {
+          var objectURL = URL.createObjectURL(photo_blob);
+          this.photo_containers.push(
+              <div key={filename} className="col-lg-3 col-md-4 col-xs-6">
+                  <img src={objectURL} className="img-fluid img-thumbnail"/>
+              </div>
+          );
+      })
+    }
+
+    fetchLog = (file_url, submission_id, filename) => {
+      fetch(file_url + submission_id + '/' + filename).then(response => {
+          return response.blob();
+      })
+      .then(file_blob => {
+          var reader = new FileReader();
+          reader.addEventListener("loadend", function() {
+             this.setState({
+               system_logs : reader.result
+             });
+          }.bind(this));
+          reader.readAsText(file_blob);
+      })
+    }
+
+    fetchVideo = (video_url, submission_id, filename) => {
+      fetch(video_url + submission_id + '/' + filename).then(response => {
+          return response.blob();
+      })
+      .then(blob => {
+          var video_blob = new Blob([blob], {type: 'video/mp4'})
+          console.log(video_blob);
+          var objectURL = URL.createObjectURL(video_blob);
+          console.log(objectURL);
+          this.video_containers.push(
+              <div key={filename} className="col-lg-3 col-md-4 col-xs-6">
+                  <ReactPlayer url={objectURL} controls/>
+              </div>
+          );
+      })
+    }
+
+    fetchFiles = () => {
+        const meta_data_url = base_url + '/api/file/meta/';
         fetch(meta_data_url + this.submission.submission_id).then(response => {
             return response.json()
         }).then(submission_files => {
-            const photo_url = base_url + '/api/file/photo/';
+
+            const file_url = base_url + '/api/file/';
             submission_files.forEach(submission_file => {
                 const submission_id = this.submission.submission_id;
                 const filename = submission_file.file.filename;
-                fetch(photo_url + submission_id + '/' + filename).then(response => {
-                    return response.blob();
-                })
-                .then(photo_blob => {
-                    var objectURL = URL.createObjectURL(photo_blob);
-                    this.photo_containers.push(
-                        <div key={filename} className="col-lg-3 col-md-4 col-xs-6">
-                            <img src={objectURL} className="img-fluid img-thumbnail"/>
-                        </div>
-                    );
-                })
+                const file_type = submission_file.submission_type;
+                switch(file_type) {
+                  case 'SystemLog':
+                    this.fetchLog(file_url, submission_id, filename)
+                    break;
+                  case 'Video':
+                    console.log("Received video")
+                    this.fetchVideo(file_url, submission_id, filename)
+                    break;
+                  case 'Photo':
+                    this.fetchPhoto(file_url, submission_id, filename)
+                    break;
+                  default:
+                    ("Unknown file type: " + file_type)
+                    break;
+                }
             });
+        }).catch(error => {
+
         });
     }
 
     componentDidMount = () => {
-        this.fetchSystemLogs();
-        this.fetchAllPhotos();
-
+        this.fetchFiles();
     }
 
     getChatLogViews = () => {
@@ -86,22 +131,22 @@ export default class SubmissionDetail extends Component {
                     <div className="well">
                         <h3><span className="fa fa-user"></span> Submitter </h3>
                         <p>
-                            <strong>User: </strong>{(this.submission.user === 'null') ? "George P. Burdell" : this.submission.user}<br/>
+                            <strong>User: </strong>{(this.submission.user === 'null') ? "George P. Burdell" : this.submission.user }<br/>
                             <strong>MongoID: </strong>{this.submission._id}<br/>
                             <strong>Submission GUID: </strong>{this.submission.submission_id}<br/>
                         </p>
                     </div>
-                    <Tabs defaultActiveKet={1} id="uncontrolled-tab-example">
-                        <Tab eventKey={1} title="Messeges">
+                    <Tabs defaultactiveket={1} id="uncontrolled-tab-example">
+                        <Tab eventKey={1} title="Messages">
                             <div>
                             <h3><span className="fa fa-envelope"></span> Messages </h3>
                             <hr/>
                             {this.getChatLogViews()}
                         </div>
                         </Tab>
-                        <Tab eventKey={2} title="Pictures/Videos">
+                        <Tab eventKey={2} title="Pictures">
                             <div>
-                                <h3><span className="fa fa-picture-o"></span> Photos/Videos </h3>
+                                <h3><span className="fa fa-picture-o"></span> Photos </h3>
                                 <div className="container">
                                     <div className="row text-center text-lg-left">
                                         {this.photo_containers}
@@ -109,18 +154,35 @@ export default class SubmissionDetail extends Component {
                                 </div>
                             </div>
                         </Tab>
-                        <Tab eventKey={3} title="Logs">
+                        <Tab eventKey={3} title="Videos">
                             <div>
-                                <h3><span className="fa fa-file-text"></span> System Logs</h3>
+                                <h3><span className="fa fa-picture-o"></span> Videos </h3>
+                                <div className="container">
+                                    <div className="row text-center text-lg-left">
+                                        {this.video_containers}
+                                    </div>
+                                </div>
+                            </div>
+                        </Tab>
+                        <Tab eventKey={4} title="Metadata">
+                            <div>
+                                <h3><span className="fa fa-file-text"></span> Metadata</h3>
                                 <div>
-                                    {this.raw_system_logs}
+                                  <JSONPretty id="json-pretty"
+                                      json={this.submission}>
+                                  </JSONPretty>
+                                </div>
+                            </div>
+                        </Tab>
+                        <Tab eventKey={5} title="Logs">
+                            <div>
+                                <h3><span className="fa fa-file-text"></span> Logs</h3>
+                                <div>
+                                    {this.state.system_logs}
                                 </div>
                             </div>
                         </Tab>
                     </Tabs>
-
-
-
                 </div>
             </div>
         )
