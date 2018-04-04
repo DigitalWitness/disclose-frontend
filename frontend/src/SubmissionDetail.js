@@ -134,6 +134,7 @@ export default class SubmissionDetail extends Component {
                             <strong>User: </strong>{(this.submission.user === 'null') ? "George P. Burdell" : this.submission.user }<br/>
                             <strong>MongoID: </strong>{this.submission._id}<br/>
                             <strong>Submission GUID: </strong>{this.submission.submission_id}<br/>
+                            <strong>Submission Date: </strong>{new Date(this.submission.datetime).toGMTString()}<br/> 
                         </p>
                     </div>
                     <Tabs defaultactiveket={1} id="uncontrolled-tab-example">

@@ -65,6 +65,7 @@ export default class SubmissionFeed extends Component {
 					<td>{submission.user === 'null' ? "George P. Burdell" : submission.user}</td>
 					<td>{submission.user === 'null' ? "gpburdell@gatech.edu" : submission.user}</td>
 					<td>{submission.user === 'null' ? "Atlanta, GA" : submission.user}</td>
+					<td>{new Date(submission.datetime).toGMTString()}</td>
 					<td>
 					<SubmissionDetailModal
 						showModal={this.state.showModal}
@@ -98,6 +99,7 @@ export default class SubmissionFeed extends Component {
 								<th className="text-center">User</th>
 								<th className="text-center">Email</th>
 								<th className="text-center">Location</th>
+								<th className="text-center">Submission Date</th>
 								<th className="text-center">View Details</th>
 							</tr>
 						</thead>
