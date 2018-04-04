@@ -88,29 +88,29 @@ export default class SubmissionFeed extends Component {
 		return rows;
 	};
 
-    render() {
-        return (
-	        <div className="SubmissionFeed">
-				<div className="container">
-		            <PageHeader>Latest Submissions</PageHeader>
-					<table className="table table-striped text-center">
-						<thead>
-							<tr>
-								<th className="text-center">User</th>
-								<th className="text-center">Email</th>
-								<th className="text-center">Location</th>
-								<th className="text-center">Submission Date</th>
-								<th className="text-center">View Details</th>
-							</tr>
-						</thead>
-						<tbody>
-							{this.getTableRows()}
-						</tbody>
-					</table>
-					<Button href='/profile'>Back to profile</Button>
-					<Button>Export List</Button>
-				</div>
+	render() {
+	    return (
+	      <div className="SubmissionFeed">
+			<div className="container">
+	            <PageHeader>Latest Submissions</PageHeader>
+				<table className="table table-striped text-center">
+					<thead>
+						<tr>
+							<th className="text-center">User</th>
+							<th className="text-center">Email</th>
+							<th className="text-center">Location</th>
+							<th className="text-center">Submission Date</th>
+							<th className="text-center">View Details</th>
+						</tr>
+					</thead>
+					<tbody>
+						{this.getTableRows()}
+					</tbody>
+				</table>
+				<Button href='/profile'>Back to profile</Button>
+				<Button href={config.base_url + '/api/submissions.csv'}>Export List</Button>
 			</div>
-        );
-    }
+		</div>
+	  );
+	}
 }
