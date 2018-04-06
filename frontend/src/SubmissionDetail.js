@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Tabs, Tab} from 'react-bootstrap'
+import {FormControl, Button, Tabs, Tab} from 'react-bootstrap'
 import JSONPretty from 'react-json-pretty';
 import ReactPlayer from 'react-player'
 import './ChatLogView.css'
@@ -15,7 +15,10 @@ export default class SubmissionDetail extends Component {
         this.submission = JSON.parse(localStorage.getItem("submission"));
         this.image_src = "";
         this.state = {
-          system_logs : "Not Submitted"
+          submission : JSON.parse(localStorage.getItem("submission")),
+          system_logs : "Not Submitted",
+          tags : this.submission.tags,
+          tagToAdd : ""
         }
         this.photo_containers = [];
         this.video_containers = [];
@@ -120,6 +123,35 @@ export default class SubmissionDetail extends Component {
         return chatLogViews;
     }
 
+    handleChange = (event) => {
+      this.setState({tagToAdd : event.target.value})
+    }
+
+    addTag = () => {
+      const updated_tags = this.state.tags.concat([this.state.tagToAdd]);
+      this.setState({
+        tags : updated_tags
+      })
+      const tagging_url = base_url + '/api/submission/tags'
+      const data = { tags : updated_tags };
+      const opts = {
+        method : 'POST',
+        headers: {'Content-Type':'application/json'},
+        body : JSON.stringify(data)
+      }
+      fetch(tagging_url + '/' + this.submission.submission_id, opts)
+      .then(response => {
+        return response.json()
+      }).then(submission => {
+        this.setState({
+          submission : submission
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      })
+    }
+
     render() {
         return (
             <div className="SubmissionDetail">
@@ -134,7 +166,9 @@ export default class SubmissionDetail extends Component {
                             <strong>User: </strong>{(this.submission.user === 'null') ? "George P. Burdell" : this.submission.user }<br/>
                             <strong>MongoID: </strong>{this.submission._id}<br/>
                             <strong>Submission GUID: </strong>{this.submission.submission_id}<br/>
-                            <strong>Submission Date: </strong>{new Date(this.submission.datetime).toGMTString()}<br/> 
+                            <strong>Submission Date: </strong>{new Date(this.submission.datetime).toGMTString()}<br/>
+                            <strong>Tags: </strong> {this.state.tags.toString()} <br/>
+                            <input type='text' value={this.state.tagToAdd} onChange={this.handleChange}/>{' '}<Button onClick={this.addTag}>Add Tag</Button>
                         </p>
                     </div>
                     <Tabs defaultactiveket={1} id="uncontrolled-tab-example">
@@ -170,7 +204,7 @@ export default class SubmissionDetail extends Component {
                                 <h3><span className="fa fa-file-text"></span> Metadata</h3>
                                 <div>
                                   <JSONPretty id="json-pretty"
-                                      json={this.submission}>
+                                      json={this.state.submission}>
                                   </JSONPretty>
                                 </div>
                             </div>

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 import './Login.css'
 import Auth from './Auth'
+import config from './config.js'
 
 export default class Login extends Component {
 
@@ -30,7 +31,7 @@ export default class Login extends Component {
         const email = encodeURIComponent(this.state.email);
         const password = encodeURIComponent(this.state.password);
         const formData = "email="+email+"&password="+password;
-        const login_url = "http://nij-disclose-stsd.gtri.gatech.edu/api/login";
+        const login_url = config.base_url + '/api/login';
         fetch(login_url, {
             method : 'POST',
             headers : {'Content-Type':'application/x-www-form-urlencoded'},
