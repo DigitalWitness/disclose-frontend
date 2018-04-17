@@ -107,7 +107,7 @@ export default class SubmissionFeed extends Component {
 						{this.getTableRows()}
 					</tbody>
 				</table>
-				<Button href='/profile'>Back to profile</Button>
+				<Button href='/profile'>Back to profile</Button>{' '}
 				<Button href={config.base_url + '/api/submissions.csv'}>Export List</Button>
 			</div>
 		</div>

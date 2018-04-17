@@ -14,11 +14,12 @@ export default class SubmissionDetail extends Component {
 
     constructor(props) {
         super(props);
-        console.log("Constructor called.")
         this.submission = JSON.parse(localStorage.getItem("submission"));
         this.image_src = "";
         this.location = this.submission.location;
-        if (this.location == null) {
+        if (this.location === null ||
+          this.location[0] === null ||
+          this.location[1] === null) {
           this.location = default_position;
         }
         this.state = {
@@ -221,7 +222,7 @@ export default class SubmissionDetail extends Component {
                         </Popup>
                       </Marker>
                       </Map>
-                    </div>
+                    </div><br/>
                     <Tabs defaultactiveket={1} id="uncontrolled-tab-example">
                         <Tab eventKey={1} title="Messages">
                             <div>
