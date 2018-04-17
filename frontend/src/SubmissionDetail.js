@@ -1,23 +1,32 @@
 import React, { Component } from 'react';
-import {FormControl, Button, Tabs, Tab} from 'react-bootstrap'
+import {FormControl, Button, Tabs, Tab, Badge} from 'react-bootstrap'
 import JSONPretty from 'react-json-pretty';
 import ReactPlayer from 'react-player'
 import './ChatLogView.css'
-
 import config from './config.js'
+import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
 
 const base_url = config.base_url;
+const default_position = [33.7490, -84.3880];
+const default_zoom = 15;
 
 export default class SubmissionDetail extends Component {
 
     constructor(props) {
         super(props);
+        console.log("Constructor called.")
         this.submission = JSON.parse(localStorage.getItem("submission"));
         this.image_src = "";
+        this.location = this.submission.location;
+        if (this.location == null) {
+          this.location = default_position;
+        }
         this.state = {
           submission : JSON.parse(localStorage.getItem("submission")),
           system_logs : "Not Submitted",
           tags : this.submission.tags,
+          location : this.location,
+          zoom : default_zoom,
           tagToAdd : ""
         }
         this.photo_containers = [];
@@ -132,8 +141,13 @@ export default class SubmissionDetail extends Component {
       this.setState({
         tags : updated_tags
       })
+      this.updateTags(updated_tags);
+    }
+
+    updateTags = (tags) => {
       const tagging_url = base_url + '/api/submission/tags'
-      const data = { tags : updated_tags };
+      const data = { tags : tags };
+      // console.log(this.state.tags);
       const opts = {
         method : 'POST',
         headers: {'Content-Type':'application/json'},
@@ -144,12 +158,36 @@ export default class SubmissionDetail extends Component {
         return response.json()
       }).then(submission => {
         this.setState({
-          submission : submission
+          tags : submission.tags,
         });
       })
       .catch(error => {
         console.error(error);
       })
+    }
+
+
+    removeTag = (tag_to_remove) => {
+      var tags = this.state.tags.slice();
+      var index = tags.indexOf(tag_to_remove);
+      if (index > -1) {
+        tags.splice(index, 1);
+      }
+      var new_state = { tags : tags }
+      console.log(new_state)
+      this.setState(new_state);
+      console.log(this.state.tags)
+      this.updateTags(tags);
+    }
+
+    getTagElements = () => {
+      var tagElements = [];
+      this.state.tags.forEach((tag) => {
+        tagElements.push(
+          <Badge key={tag} onClick={() => this.removeTag(tag)}>{tag}</Badge>
+        );
+      });
+      return tagElements;
     }
 
     render() {
@@ -167,9 +205,22 @@ export default class SubmissionDetail extends Component {
                             <strong>MongoID: </strong>{this.submission._id}<br/>
                             <strong>Submission GUID: </strong>{this.submission.submission_id}<br/>
                             <strong>Submission Date: </strong>{new Date(this.submission.datetime).toGMTString()}<br/>
-                            <strong>Tags: </strong> {this.state.tags.toString()} <br/>
+                            <strong>Tags: </strong> {this.getTagElements()}<br/>
                             <input type='text' value={this.state.tagToAdd} onChange={this.handleChange}/>{' '}<Button onClick={this.addTag}>Add Tag</Button>
                         </p>
+                    </div>
+                    <div>
+                      <Map center={this.state.location} zoom={this.state.zoom}>
+                      <TileLayer
+                        url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                      />
+                      <Marker position={default_position}>
+                        <Popup>
+                          <span>A pretty CSS3 popup.<br/>Easily customizable.</span>
+                        </Popup>
+                      </Marker>
+                      </Map>
                     </div>
                     <Tabs defaultactiveket={1} id="uncontrolled-tab-example">
                         <Tab eventKey={1} title="Messages">
