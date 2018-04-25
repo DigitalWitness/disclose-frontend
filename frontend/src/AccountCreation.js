@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { FormGroup, FormControl, ControlLabel, Modal, Button} from 'react-bootstrap'
+import config from './config.js'
 
 export default class AccountCreationForm extends Component {
 
@@ -25,7 +26,7 @@ export default class AccountCreationForm extends Component {
                         +"&password="+this.state.password
                         +"&fname="+this.state.firstName
                         +"&lname="+this.state.lastName;
-        const signup_url = 'http://violetcement01.icl.gtri.org/api/signup'
+        const signup_url = config.base_url + '/api/signup'
         fetch(signup_url, {
             method : 'POST',
             headers: {'Content-Type':'application/x-www-form-urlencoded'},
@@ -82,7 +83,7 @@ export default class AccountCreationForm extends Component {
                                 block
                                 bsSize="large"
                                 type="submit">
-                           Login
+                           Create
                            </Button>
                         </form>
                     </Modal.Body>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FormControl, Button, Tabs, Tab, Badge} from 'react-bootstrap'
+import {Button, Tabs, Tab, Badge} from 'react-bootstrap'
 import JSONPretty from 'react-json-pretty';
 import ReactPlayer from 'react-player'
 import './ChatLogView.css'
@@ -16,11 +16,9 @@ export default class SubmissionDetail extends Component {
         super(props);
         this.submission = JSON.parse(localStorage.getItem("submission"));
         this.image_src = "";
-        this.location = this.submission.location;
-        if (this.location === null ||
-          this.location[0] === null ||
-          this.location[1] === null) {
-          this.location = default_position;
+        this.location = default_position;
+        if (this.submission.location !== undefined) {
+            this.location = this.submission.location;
         }
         this.state = {
           submission : JSON.parse(localStorage.getItem("submission")),
@@ -46,7 +44,7 @@ export default class SubmissionDetail extends Component {
           var objectURL = URL.createObjectURL(photo_blob);
           this.photo_containers.push(
               <div key={filename} className="col-lg-3 col-md-4 col-xs-6">
-                  <img src={objectURL} className="img-fluid img-thumbnail"/>
+                  <img src={objectURL} alt="Not found" className="img-fluid img-thumbnail"/>
               </div>
           );
       })
@@ -107,12 +105,14 @@ export default class SubmissionDetail extends Component {
                     this.fetchPhoto(file_url, submission_id, filename)
                     break;
                   default:
-                    ("Unknown file type: " + file_type)
+                    // For now assume photo:
+                    this.fetchPhoto(file_url, submission_id, filename)
+                    console.log("Unknown file type: " + file_type)
                     break;
                 }
             });
         }).catch(error => {
-
+            console.log(error)
         });
     }
 
@@ -148,7 +148,6 @@ export default class SubmissionDetail extends Component {
     updateTags = (tags) => {
       const tagging_url = base_url + '/api/submission/tags'
       const data = { tags : tags };
-      // console.log(this.state.tags);
       const opts = {
         method : 'POST',
         headers: {'Content-Type':'application/json'},
@@ -175,19 +174,19 @@ export default class SubmissionDetail extends Component {
         tags.splice(index, 1);
       }
       var new_state = { tags : tags }
-      console.log(new_state)
       this.setState(new_state);
-      console.log(this.state.tags)
       this.updateTags(tags);
     }
 
     getTagElements = () => {
       var tagElements = [];
-      this.state.tags.forEach((tag) => {
-        tagElements.push(
-          <Badge key={tag} onClick={() => this.removeTag(tag)}>{tag}</Badge>
-        );
-      });
+      if (this.state.tags !== undefined) {
+          this.state.tags.forEach((tag) => {
+            tagElements.push(
+              <Badge key={tag} onClick={() => this.removeTag(tag)}>{tag} [x]</Badge>
+            );
+          });
+      }
       return tagElements;
     }
 
@@ -291,7 +290,7 @@ class ChatLogView extends Component {
                 <div className="message-container">
                     <span>{message.message}</span><br/>
                     <span className="time-left">{message.sender}</span>
-                    <span className="time-right">{new Date(parseInt(message.time)).toString()}</span><br/>
+                    <span className="time-right">{new Date(parseInt(message.time, 10)).toString()}</span><br/>
                 </div>
             )
         });

@@ -31,6 +31,10 @@ export default class SubmissionFeed extends Component {
 		this.fetchSubmissions();
 	}
 
+	getCSV = () => {
+		window.open(config.base_url + '/api/submissions.csv');
+	}
+
 	fetchSubmissions = () => {
 		const url = config.base_url + '/api/submission'
 		fetch(url)
@@ -108,7 +112,7 @@ export default class SubmissionFeed extends Component {
 					</tbody>
 				</table>
 				<Button href='/profile'>Back to profile</Button>{' '}
-				<Button href={config.base_url + '/api/submissions.csv'}>Export List</Button>
+				<Button onClick={() => this.getCSV()}>Export List</Button>
 			</div>
 		</div>
 	  );

@@ -8,10 +8,11 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             email : "",
-            password : ""
+            password : "",
+            flash_login_message  : false,
+            message : ""
         };
     }
 
@@ -27,7 +28,6 @@ export default class Login extends Component {
     }
 
     login() {
-        console.log("Logging in")
         const email = encodeURIComponent(this.state.email);
         const password = encodeURIComponent(this.state.password);
         const formData = "email="+email+"&password="+password;
@@ -37,13 +37,21 @@ export default class Login extends Component {
             headers : {'Content-Type':'application/x-www-form-urlencoded'},
             body : formData
         }).then(response => {
-            if (response.status !== 200) {
-                console.error('Error | Status Code: ' + response.status);
-                alert("Username not found or password incorrect.")
-                return;
+            return response.json();
+        }).then(response => {
+            if (response.success) {
+                localStorage.setItem("email", this.state.email);
+                localStorage.setItem("fname", response.token.local.fname);
+                localStorage.setItem("lname", response.token.local.lname);
+                Auth.authenticateUser(JSON.stringify(response.token._id));
+                this.props.history.push('/profile');
             }
-            localStorage.setItem("email", this.state.email);
-            this.props.history.push('/profile');
+            else {
+              this.setState({
+                flash_login_message : true,
+                message : response.message
+              })
+            }
         }).catch(error => {
             console.log(error)
         });
@@ -58,8 +66,11 @@ export default class Login extends Component {
         return(
             <div className="Login">
                 <form onSubmit={this.handleSubmit}>
+                {
+                  this.state.flash_login_message &&
+                  <div className="alert alert-danger">{this.state.message}</div>
+                }
                 <h1><span className="fa fa-sign-in"></span> Login</h1>
-
                     <FormGroup controlId="email" bsSize="large">
                         <ControlLabel>Email</ControlLabel>
                         <FormControl

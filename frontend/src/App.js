@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { withRouter } from "react-router-dom";
-import Header from './Header'
 import Routes from './Routes'
 import './App.css'
 
@@ -17,7 +16,6 @@ class App extends Component {
     render() {
         const childProps = {
             isAuthenticated: this.state.isAuthenticated,
-            userHasAuthenticated: this.userHasAuthenticated
         };
         return (
             <div>
